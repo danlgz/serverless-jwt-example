@@ -35,7 +35,7 @@ describe('User auth', () => {
 });
 
 describe('User refresh token', () => {
-  it('refresh token successfuly', async () => {
+  it('refresh token: successfuly', async () => {
     const userRepo = new UserRepo();
     const jwtGeneratorRepo = new JWTGeneratorRepo();
     const authUseCase = userAuthentication(userRepo, jwtGeneratorRepo);
@@ -47,5 +47,13 @@ describe('User refresh token', () => {
 
     expect(token).toMatch(JWTConfiguration.pattern);
     expect(refresh).toMatch(JWTConfiguration.pattern);
-  })
+  });
+
+  it('refresh token: failed', async () => {
+    const userRepo = new UserRepo();
+    const jwtVerifierRepo = new JWTVerifierRepo(userRepo);
+    const refreshUseCase = userRefresh(jwtVerifierRepo);
+
+    await expect(refreshUseCase('')).rejects.toThrow('invalid refresh token');
+  });
 });

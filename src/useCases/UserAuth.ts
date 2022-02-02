@@ -9,15 +9,9 @@ type userAuthenticationReturnType = {
 };
 
 export const userAuthentication = (userRepo: IUserRepo, jwtGeneratorRepo: IJWTGeneratorRepo) => async (username: string, password: string): Promise<userAuthenticationReturnType> => {
-  let user: User;
-  try {
-    user = await userRepo.getByUsernameAndPassword(username, password);
-  } catch(err) {
-    if (err instanceof Error) throw err
-    throw new Error(err)
-  }
-
+  const user = await userRepo.getByUsernameAndPassword(username, password);
   jwtGeneratorRepo.register(user);
+
   const tokens = jwtGeneratorRepo.sign();
   const resposne = {
     publicUser: user.publicUser(),
@@ -30,14 +24,7 @@ export const userAuthentication = (userRepo: IUserRepo, jwtGeneratorRepo: IJWTGe
 
 export const userRefresh = (jwtVerifierRepo: IJWTVerifierRepo) => async (refresh: string): Promise<TokenDataType> => {
   jwtVerifierRepo.registerRefresh(refresh);
-
-  let tokens: TokenDataType;
-  try {
-    tokens = await jwtVerifierRepo.refreshToken();
-  } catch(err) {
-    if (err instanceof Error) throw err
-    throw new Error(err)
-  }
+  const tokens = await jwtVerifierRepo.refreshToken();
 
   return tokens;
 }
