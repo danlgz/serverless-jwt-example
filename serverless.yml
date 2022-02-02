@@ -61,6 +61,12 @@ package:
 #    - include-me-dir/**
 
 functions:
+  userRefresh:
+    handler: src/lambdas/userRefresh.handler
+    events:
+      - httpApi:
+          path: /api/auth/refresh
+          method: post
   userAuthentication:
     handler: src/lambdas/userAuthentication.handler
 #    The following are a few example events you can configure
