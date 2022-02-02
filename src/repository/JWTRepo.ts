@@ -47,15 +47,14 @@ export class JWTGeneratorRepo extends JWTBase implements IJWTGeneratorRepo {
 }
 
 export class JWTVerifierRepo extends JWTBase implements IJWTVerifierRepo {
-  tokenData: TokenDataType;
+  token: string;
+  refresh: string;
   private userRepo: IUserRepo;
   private decodedTokenData: TokenDecodedDataType;
   private decodedRefreshData: TokenDecodedDataType;
 
-  constructor(tokenData: TokenDataType, userRepo: IUserRepo) {
+  constructor(userRepo: IUserRepo) {
     super();
-
-    this.tokenData = tokenData;
     this.userRepo = userRepo;
   }
 
@@ -65,8 +64,16 @@ export class JWTVerifierRepo extends JWTBase implements IJWTVerifierRepo {
     } catch { return null }
   }
 
+  registerToken(token: string) {
+    this.token = token;
+  }
+
+  registerRefresh(refresh: string) {
+    this.refresh = refresh;
+  }
+
   isTokenValid(): boolean {
-    const data = this.verify(this.tokenData.token);
+    const data = this.verify(this.token);
     if (data === null) return false;
 
     this.decodedTokenData = data;
@@ -74,7 +81,7 @@ export class JWTVerifierRepo extends JWTBase implements IJWTVerifierRepo {
   }
 
   isRefreshValid(): boolean {
-    const data = this.verify(this.tokenData.refresh);
+    const data = this.verify(this.refresh);
     if (data === null) return false;
 
     this.decodedRefreshData = data;
@@ -88,11 +95,9 @@ export class JWTVerifierRepo extends JWTBase implements IJWTVerifierRepo {
     const user = await this.userRepo.getById(this.decodedRefreshData.id);
     this.register(user);
 
-    this.tokenData = {
-      token: this.generateToken(),
-      refresh: this.generateRefresh(),
-    }
+    this.token = this.generateToken();
+    this.refresh = this.generateRefresh();
 
-    return this.tokenData;
+    return { token: this.token, refresh: this.refresh };
   }
 }

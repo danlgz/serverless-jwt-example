@@ -35,16 +35,36 @@ describe('JWT verify', () => {
     const userRepo = new UserRepo();
     const jwtGeneratorRepo = new JWTGeneratorRepo();
     jwtGeneratorRepo.register(await userRepo.getByUsernameAndPassword('marshmccall@ultrimax.com', 'root'));
-    const jwtVerifier = new JWTVerifierRepo(jwtGeneratorRepo.sign(), userRepo);
+    const jwtVerifier = new JWTVerifierRepo(userRepo);
+
+    const { token, refresh } = jwtGeneratorRepo.sign();
+    jwtVerifier.registerToken(token);
+    jwtVerifier.registerRefresh(refresh);
 
     expect(jwtVerifier.isTokenValid()).toBeTruthy();
     expect(jwtVerifier.isRefreshValid()).toBeTruthy();
-    expect(await jwtVerifier.refreshToken()).toBeDefined()
+  });
+
+  it('refresh token', async () => {
+    const userRepo = new UserRepo();
+    const jwtGeneratorRepo = new JWTGeneratorRepo();
+    jwtGeneratorRepo.register(await userRepo.getByUsernameAndPassword('marshmccall@ultrimax.com', 'root'));
+    const jwtVerifier = new JWTVerifierRepo(userRepo);
+    const tokens = jwtGeneratorRepo.sign();
+    jwtVerifier.registerRefresh(tokens.refresh);
+
+    const { token, refresh } = await jwtVerifier.refreshToken();
+
+    expect(token).toMatch(JWTConfiguration.pattern);
+    expect(refresh).toMatch(JWTConfiguration.pattern);
   });
 
   it('invalid tokens', async () => {
     const userRepo = new UserRepo();
-    const jwtVerifier = new JWTVerifierRepo({ token: '', refresh: '' }, userRepo);
+    const jwtVerifier = new JWTVerifierRepo(userRepo);
+
+    jwtVerifier.registerToken('');
+    jwtVerifier.registerRefresh('');
 
     expect(jwtVerifier.isTokenValid()).toBeFalsy();
     expect(jwtVerifier.isRefreshValid()).toBeFalsy();

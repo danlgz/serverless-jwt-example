@@ -1,5 +1,4 @@
 import User from "../../domain/User";
-import { UserRepo } from "../../repository/UserRepo";
 
 export type TokenDataType = {
   token: string;
@@ -12,7 +11,10 @@ export interface IJWTGeneratorRepo {
 }
 
 export interface IJWTVerifierRepo {
-  tokenData: TokenDataType;
+  token: string;
+  refresh: string;
+  registerToken(token: string): void;
+  registerRefresh(refresh: string): void;
   isTokenValid(): boolean;
   isRefreshValid(): boolean;
   refreshToken(): Promise<TokenDataType>;
