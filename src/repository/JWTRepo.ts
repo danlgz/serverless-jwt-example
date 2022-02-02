@@ -27,6 +27,8 @@ export class JWTGeneratorRepo implements IJWTGeneratorRepo {
   }
 
   sign(): SignReturnType {
+    if (!this.user) throw new Error('user not registered');
+
     const token = this.token();
     const refresh = this.refresh();
 

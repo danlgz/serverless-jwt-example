@@ -4,6 +4,11 @@ import { UserRepo } from "../../src/repository/UserRepo";
 
 
 describe('JWT user generator', () => {
+  it('user not registered', () => {
+    const jwtGeneratorRepo = new JWTGeneratorRepo();
+    expect(() => jwtGeneratorRepo.sign()).toThrow('user not registered');
+  });
+
   it('token generation', async () => {
     const userRepo = new UserRepo();
     const jwtGeneratorRepo = new JWTGeneratorRepo();

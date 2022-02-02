@@ -28,7 +28,6 @@ describe('failed lambda execution', () => {
 describe('success lambda execution', () => {
   it('authentication: success', async () => {
     const response = await wrapped.run({ body: JSON.stringify({ username: 'marshmccall@ultrimax.com', password: 'root'})});
-    console.log(response);
     expect(response.statusCode).toBe(200);
   });
 });
