@@ -64,4 +64,17 @@ describe('User repository', () => {
 
     await expect(repo.getByUsernameAndPassword('', '')).rejects.toThrow('user does not exists');
   });
+
+  it('get user by id', async () => {
+    const repo = new UserRepo();
+    const user = await repo.getById('c4901101-8ab4-41a1-a309-dc7ae92494cc');
+
+    expect(user.id).toBe('c4901101-8ab4-41a1-a309-dc7ae92494cc');
+  });
+
+  it('get user by exceptioni', async () => {
+    const repo = new UserRepo();
+
+    await expect(repo.getById('')).rejects.toThrow('user does not exists');
+  });
 });

@@ -1,11 +1,19 @@
 import User from "../../domain/User";
+import { UserRepo } from "../../repository/UserRepo";
 
-export type SignReturnType = {
+export type TokenDataType = {
   token: string;
   refresh: string;
 }
 
-export default interface IJWTGeneratorRepo {
+export interface IJWTGeneratorRepo {
   register(user: User): void;
-  sign(): SignReturnType;
+  sign(): TokenDataType;
+}
+
+export interface IJWTVerifierRepo {
+  tokenData: TokenDataType;
+  isTokenValid(): boolean;
+  isRefreshValid(): boolean;
+  refreshToken(): Promise<TokenDataType>;
 }

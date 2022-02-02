@@ -37,4 +37,17 @@ export class UserRepo implements IUserRepo {
       resolve(users[indexResult]);
     });
   }
+
+  getById(id: string): Promise<User> {
+    return new Promise(async (resolve, reject) => {
+      const users = await this.list();
+      const indexResult = users.findIndex(u => u.id === id);
+      if (indexResult === -1) {
+        reject(new Error('user does not exists'))
+        return;
+      }
+
+      resolve(users[indexResult]);
+    });
+  }
 }

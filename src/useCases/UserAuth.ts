@@ -1,4 +1,4 @@
-import IJWTGeneratorRepo from "../core/interfaces/IJWTRepo";
+import { IJWTGeneratorRepo } from "../core/interfaces/IJWTRepo";
 import IUserRepo from "../core/interfaces/IUserRepo";
 import User, { PublicUserType } from "../domain/User";
 
