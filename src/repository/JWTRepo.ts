@@ -90,7 +90,7 @@ export class JWTVerifierRepo extends JWTBase implements IJWTVerifierRepo {
 
   async refreshToken(): Promise<TokenDataType> {
     const canRefresh = this.isRefreshValid();
-    if (!canRefresh) throw new Error('invalid refresh token');
+    if (!canRefresh || this.decodedRefreshData.type !== 'refresh') throw new Error('invalid refresh token');
 
     const user = await this.userRepo.getById(this.decodedRefreshData.id);
     this.register(user);

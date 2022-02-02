@@ -59,6 +59,17 @@ describe('JWT verify', () => {
     expect(refresh).toMatch(JWTConfiguration.pattern);
   });
 
+  it('invalid refresh token type', async () => {
+    const userRepo = new UserRepo();
+    const jwtGeneratorRepo = new JWTGeneratorRepo();
+    jwtGeneratorRepo.register(await userRepo.getByUsernameAndPassword('marshmccall@ultrimax.com', 'root'));
+    const jwtVerifier = new JWTVerifierRepo(userRepo);
+    const tokens = jwtGeneratorRepo.sign();
+    jwtVerifier.registerRefresh(tokens.token);
+
+    await expect(jwtVerifier.refreshToken()).rejects.toThrow('invalid refresh token');
+  });
+
   it('invalid tokens', async () => {
     const userRepo = new UserRepo();
     const jwtVerifier = new JWTVerifierRepo(userRepo);
